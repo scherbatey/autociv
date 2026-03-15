@@ -67,8 +67,9 @@ autociv_patchApplyN("init", function (target, that, args) {
 		}
 		temp(object, keys)
 	}
-	target.apply(that, args);
+	const promise = target.apply(that, args);
 	global["translateObjectKeys"] = temp
+	return promise;
 })
 
 /**

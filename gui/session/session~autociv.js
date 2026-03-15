@@ -66,7 +66,7 @@ function getGuiObjectsWithHotkey()
 
 	while (true)
 	{
-		let object = Engine.GetGUIObjectByName(`__internal(${internal})`)
+		let object = Engine.TryGetGUIObjectByName(`__internal(${internal})`)
 		if (!object)
 			break
 
@@ -95,8 +95,12 @@ function autociv_changeSomeHotkeysToKeyDownAsPressTypeCantBeDiscardedFromBeingCa
 			continue
 
 		const [from, to] = g_hotkeyObjectChange[hotkey]
-		obj[to] = obj[from].bind(obj[from])
-		delete obj[from]
+
+		if (obj[from] && typeof obj[from] === 'function')
+		{
+			obj[to] = obj[from].bind(obj[from])
+			delete obj[from]
+		}
 	}
 
 	{
@@ -109,7 +113,6 @@ function autociv_changeSomeHotkeysToKeyDownAsPressTypeCantBeDiscardedFromBeingCa
 		Engine.SetGlobalHotkey("teamchat", "KeyDown", () => { that.openPage(g_IsObserver ? "/observers" : "/allies"); });
 	}
 }
-
 autociv_patchApplyN("init", function (target, that, args)
 {
 	let result = target.apply(that, args)

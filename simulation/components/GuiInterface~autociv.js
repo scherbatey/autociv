@@ -174,7 +174,7 @@ GuiInterface.prototype.autociv_FindEntitiesWithClassesExpression = function (pla
 };
 
 /**
- * Opimitzed stats function for autociv stats overlay
+ * Optimized stats function for autociv stats overlay
  */
 GuiInterface.prototype.autociv_GetStatsOverlay = function ()
 {
@@ -184,17 +184,29 @@ GuiInterface.prototype.autociv_GetStatsOverlay = function ()
 
     const cmpPlayerManager = Engine.QueryInterface(SYSTEM_ENTITY, IID_PlayerManager);
     const numPlayers = cmpPlayerManager.GetNumPlayers();
+
     for (let player = 0; player < numPlayers; ++player)
     {
         const playerEnt = cmpPlayerManager.GetPlayerByID(player);
         const cmpPlayer = Engine.QueryInterface(playerEnt, IID_Player);
-        const comDiplomacy = QueryPlayerIDInterface(player, IID_Diplomacy);
+        const cmpDiplomacy = Engine.QueryInterface(playerEnt, IID_Diplomacy);
         const cmpIdentity = Engine.QueryInterface(playerEnt, IID_Identity);
 
+        // Build shared LOS array for this player
+        const sharedLosArray = [];
+        for (let otherPlayer = 0; otherPlayer < numPlayers; ++otherPlayer)
+        {
+            if (otherPlayer === player)
+            {
+                sharedLosArray[otherPlayer] = true; // Always share with self
+                continue;
+            }
+            sharedLosArray[otherPlayer] = cmpDiplomacy.HasSharedLos(otherPlayer);
+        }
 
         // Work out which phase we are in.
         let phase = 0;
-		const cmpTechnologyManager = Engine.QueryInterface(playerEnt, IID_TechnologyManager);
+        const cmpTechnologyManager = Engine.QueryInterface(playerEnt, IID_TechnologyManager);
         if (cmpTechnologyManager)
         {
             if (cmpTechnologyManager.IsTechnologyResearched("phase_city"))
@@ -206,15 +218,15 @@ GuiInterface.prototype.autociv_GetStatsOverlay = function ()
         }
 
         const cmpPlayerStatisticsTracker = QueryPlayerIDInterface(player, IID_StatisticsTracker);
-        const classCounts = cmpTechnologyManager?.GetClassCounts()
+        const classCounts = cmpTechnologyManager?.GetClassCounts();
 
         ret.players.push({
             "name": cmpIdentity.GetName(),
             "popCount": cmpPlayer.GetPopulationCount(),
             "resourceCounts": cmpPlayer.GetResourceCounts(),
             "state": cmpPlayer?.GetState() ?? "",
-            "team": comDiplomacy.GetTeam(),
-            "hasSharedLos": comDiplomacy.HasSharedLos(),
+            "team": cmpDiplomacy.GetTeam(),
+            "hasSharedLos": sharedLosArray,
             "phase": phase,
             "researchedTechsCount": cmpTechnologyManager?.GetResearchedTechs().size ?? 0,
             "classCounts_Support": classCounts?.Support ?? 0,
@@ -230,7 +242,7 @@ GuiInterface.prototype.autociv_GetStatsOverlay = function ()
     }
 
     return ret;
-};
+}
 
 GuiInterface.prototype.autociv_setHealersInitialStanceAggressive = function (player, active)
 {

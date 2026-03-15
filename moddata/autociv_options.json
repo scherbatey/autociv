@@ -69,6 +69,34 @@
 			},
 			{
 				"type": "boolean",
+				"label": "[color=\"220 185 70\"]StatsOverlay:[/color] Show resources",
+				"tooltip": "Display resource counts (Food, Wood, Stone, Metal) in the stats overlay",
+				"config": "autociv.stats.resources",
+				"dependencies": ["autociv.session.statsOverlay.visible"]
+			},
+			{
+				"type": "boolean",
+				"label": "[color=\"220 185 70\"]StatsOverlay:[/color] Show military composition",
+				"tooltip": "Display detailed military unit counts (Support, Infantry, Cavalry, Siege, Champion, Melee, Ranged)",
+				"config": "autociv.stats.militarycomposition",
+				"dependencies": ["autociv.session.statsOverlay.visible"]
+			},
+			{
+				"type": "boolean",
+				"label": "[color=\"220 185 70\"]StatsOverlay:[/color] Show K/D ratio",
+				"tooltip": "Display kill/death statistics (Kills, Losses, K/D Ratio)",
+				"config": "autociv.stats.kdratio",
+				"dependencies": ["autociv.session.statsOverlay.visible"]
+			},
+			{
+				"type": "boolean",
+				"label": "[color=\"220 185 70\"]StatsOverlay:[/color] Show allies",
+				"tooltip": "Display statistics for allied players (requires shared vision)",
+				"config": "autociv.stats.alliesview",
+				"dependencies": ["autociv.session.statsOverlay.visible"]
+			},
+			{
+				"type": "boolean",
 				"label": "[color=\"220 185 70\"]StatsOverlay:[/color] Detailed Stats",
 				"tooltip": "Show the detailed statistics for you? Includes more unit types, techs to evaluate your current strength.",
 				"config": "autociv.stats.resources",
